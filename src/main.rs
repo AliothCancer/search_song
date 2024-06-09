@@ -42,17 +42,20 @@ fn main() {
     while let Some(mut child) = yt_dlp_process.stdout.take() {
         if let Ok(_len) = child.read_to_string(&mut yt_dlp_output){
             let intr_line = yt_dlp_output.lines()
-            .find(|x| x.contains("[download] /home/giulio/Musica/dowloaded/"))
+            .find(|x| x.contains("/home/giulio/Musica/dowloaded/"))
             .unwrap_or("")
             .split("/home/giulio/Musica/dowloaded/")
             .last()
             .unwrap_or("")
+            //.to_string()
             .split(".m4a")
+            .filter(|x|x.len()>2)
             .take(1)
-            .collect::<String>();
+            .map(str::to_string)
+            .collect::<Vec<String>>();
             //println!("{}", &yt_dlp_output[..len])
             println!("line: {:?}", intr_line);
-            song_name = intr_line;
+            song_name = intr_line.get(0).unwrap().to_owned();
         };
     }
 
