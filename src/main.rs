@@ -26,9 +26,8 @@ fn main() {
 
     state = ProgramState::Downloading;
     let mut yt_dlp_process = Command::new("yt-dlp")
-        .args(["-f", "139"])
+        .args(["-f", "bestaudio"])
         .arg("--extract-audio")
-        //.args(["--audio-format", "m4a"])
         .arg(query)
         .args(["-o", "/home/giulio/Musica/dowloaded/%(title)s.%(ext)s"])
         .stdout(Stdio::piped())
@@ -41,27 +40,38 @@ fn main() {
 
     while let Some(mut child) = yt_dlp_process.stdout.take() {
         if let Ok(_len) = child.read_to_string(&mut yt_dlp_output){
-            let intr_line = yt_dlp_output.lines()
+            let mut intr_line = yt_dlp_output.lines()
             .find(|x| x.contains("/home/giulio/Musica/dowloaded/"))
             .unwrap_or("")
             .split("/home/giulio/Musica/dowloaded/")
             .last()
             .unwrap_or("")
             //.to_string()
-            .split(".m4a")
-            .filter(|x|x.len()>2)
-            .take(1)
+            .split(".")
+           
+            //.filter(|x|x.len()>2)
+            //.take(1)
             .map(str::to_string)
             .collect::<Vec<String>>();
+            
+            intr_line.iter_mut()
+            .for_each(|x|{
+                *x = match x.as_str() {
+                    "webm" => "opus".to_string(),
+                    _ => x.to_string()
+                }
+            });
+            
+            
             //println!("{}", &yt_dlp_output[..len])
-            println!("line: {:?}", intr_line);
-            song_name = intr_line.get(0).unwrap().to_owned();
+            println!("line: {:?}", &intr_line);
+            song_name = intr_line.join(".")
         };
     }
 
     yt_dlp_process.wait().expect("Waiting for completion of yt-dlp execution");
     
-    song_name += ".m4a";
+    //song_name += ".m4a";
     println!("song_name: {}",&song_name);
     //dbg!(youtube_dl_process);
     println!("Succesfully downloaded to:\n{}", "/home/giulio/Musica/dowloaded/".to_string()+&song_name);
