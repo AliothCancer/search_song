@@ -11,8 +11,9 @@ fn generate_file_name_for_query(song_title: &str) -> String {
     file_name
 }
 
-const MUSIC_FOLDER: &str = "/home/giulio/Music/";
+
 fn main() {
+    let music_folder = "/home/giulio/Music/";
     let mut state = ProgramState::Started;
 
     let search_query = env::args().skip(1).collect::<Vec<_>>().join(" ");
@@ -32,7 +33,7 @@ fn main() {
         // /home/giulio/Musica/downloaded
         .args([
             "-o",
-            &(MUSIC_FOLDER.to_string() + "dowloaded/%(title)s.%(ext)s"),
+            &(music_folder.to_string() + "dowloaded/%(title)s.%(ext)s"),
         ])
         .stdout(Stdio::piped())
         .stderr(Stdio::inherit())
@@ -46,7 +47,7 @@ fn main() {
         if let Ok(_len) = child.read_to_string(&mut yt_dlp_output) {
             let mut intr_line = yt_dlp_output
                 .lines()
-                .find(|x| x.contains(&(MUSIC_FOLDER.to_string() + "dowloaded/")))
+                .find(|x| x.contains(&(music_folder.to_string() + "dowloaded/")))
                 .unwrap_or("")
                 .split("/home/giulio/Music/dowloaded/")
                 .last()
@@ -80,7 +81,7 @@ fn main() {
     //dbg!(youtube_dl_process);
     println!(
         "Succesfully downloaded to:\n{}",
-        (MUSIC_FOLDER.to_string() + "dowloaded/").to_string() + &song_name
+        (music_folder.to_string() + "dowloaded/").to_string() + &song_name
     );
 
     state = ProgramState::Downloaded;
@@ -92,7 +93,7 @@ fn main() {
     //let file_name = generate_file_name_for_query(&search_query);
     //println!("file_name: {}",file_name);
 
-    let file_name = Path::new(&(MUSIC_FOLDER.to_string() + "dowloaded/")).join(song_name);
+    let file_name = Path::new(&(music_folder.to_string() + "dowloaded/")).join(song_name);
 
     let arg_file_path = file_name.to_str().unwrap();
 
