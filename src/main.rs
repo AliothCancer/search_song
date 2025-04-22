@@ -1,14 +1,13 @@
-#![allow(clippy::zombie_processes)]
+#![allow(clippy::zombie_processes, unused_assignments)]
 
 use std::io::{stdin, stdout, Read, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
-use std::time::Duration;
-use std::{env, thread};
+use std::env;
 
-fn generate_file_name_for_query(song_title: &str) -> String {
-    let file_name = song_title.replace(" ", "_").to_string();
-    file_name
+fn _generate_file_name_for_query(song_title: &str) -> String {
+    
+    song_title.replace(" ", "_").to_string()
 }
 
 
@@ -148,7 +147,7 @@ fn main() {
             _ => continue,
         }
 
-        std::thread::sleep(Duration::from_millis(100))
+        //std::thread::sleep(Duration::from_millis(100))
     }
 }
 
